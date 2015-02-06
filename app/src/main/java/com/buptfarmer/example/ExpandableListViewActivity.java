@@ -1,7 +1,6 @@
 package com.buptfarmer.example;
 
 import android.app.Activity;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +37,8 @@ public class ExpandableListViewActivity extends Activity {
             cal.add(Calendar.DAY_OF_MONTH, index);
             String value = sdf.format(cal.getTime());
             mGroutList.add(value);
+        }
+        for (int index = 0; index < 10; index++) {
             mChildList.add("child value:" + index);
         }
         mListView = (ExpandableListView) findViewById(R.id.expand_list_view);
