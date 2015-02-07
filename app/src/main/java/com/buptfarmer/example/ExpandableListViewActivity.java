@@ -25,11 +25,12 @@ public class ExpandableListViewActivity extends Activity {
         private ArrayList<String> mGroupList;
         private ArrayList<String> mChildList;
         private LayoutInflater mInlater;
-
-        public IndexableExpandableListAdapter(Activity activity, ArrayList<String> groupList, ArrayList<String> childList) {
+        private IndexableExpandableListView mListView;
+        public IndexableExpandableListAdapter(Activity activity, IndexableExpandableListView listView,ArrayList<String> groupList, ArrayList<String> childList) {
             mGroupList = groupList;
             mChildList = childList;
             mInlater = activity.getLayoutInflater();
+            mListView = listView;
             Log.d("ccc", "init size:" + mGroupList.size());
         }
 
@@ -46,7 +47,19 @@ public class ExpandableListViewActivity extends Activity {
         @Override
         public int getPositionForSection(int sectionIndex) {
             Log.d("ccc", "getPositionForSection sectionIndex:" + sectionIndex);
-            return sectionIndex;
+//            mListView.setSelectedChild(sectionIndex, 1, true);
+//            mListView.setSelection(sectionIndex);
+//            mListView.setSelectedGroup(sectionIndex);
+//            long pos = mListView.getSelectedPosition();
+//            int pos = mListView.getSelectedItemPosition();
+            long packedPosition = mListView.getPackedPositionForGroup(sectionIndex);
+//            Log.d("ccc", "getPositionForSection packedPosition:" + packedPosition);
+            int flatPosition = mListView.getFlatListPosition(packedPosition);
+//            Log.d("ccc", "getPositionForSection flatPosition:" + flatPosition);
+            long pos = mListView.getExpandableListPosition(flatPosition);
+//            Log.d("ccc", "getPositionForSection pos:" + pos);
+//            mListView.setSelection();
+            return flatPosition;
         }
 
         @Override
@@ -112,7 +125,7 @@ public class ExpandableListViewActivity extends Activity {
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
+            return true;
         }
 
     }
@@ -141,7 +154,7 @@ public class ExpandableListViewActivity extends Activity {
             mChildList.add("child value:" + index);
         }
         mListView = (IndexableExpandableListView) findViewById(R.id.expand_list_view);
-        mAdapter = new IndexableExpandableListAdapter(this, mGroutList, mChildList);
+        mAdapter = new IndexableExpandableListAdapter(this,mListView, mGroutList, mChildList);
         mListView.setAdapter(mAdapter);
         mListView.setFastScrollEnabled(true);
     }
