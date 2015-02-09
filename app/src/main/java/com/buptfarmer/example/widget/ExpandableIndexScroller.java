@@ -78,7 +78,6 @@ public class ExpandableIndexScroller {
         // mAlphaRate determines the rate of opacity
         mIndexbarPaint = new Paint();
         mIndexbarPaint.setColor(Color.BLACK);
-        mIndexbarPaint.setAlpha((int) (64 * mAlphaRate));
         mIndexbarPaint.setAntiAlias(true);
 
 
@@ -97,7 +96,6 @@ public class ExpandableIndexScroller {
 
         mIndexPaint = new Paint();
         mIndexPaint.setColor(Color.WHITE);
-        mIndexPaint.setAlpha((int) (255 * mAlphaRate));
         mIndexPaint.setAntiAlias(true);
         mIndexPaint.setTextSize(12 * mScaledDensity);
     }
@@ -106,6 +104,8 @@ public class ExpandableIndexScroller {
         if (mState == STATE_HIDDEN)
             return;
 
+        mIndexbarPaint.setAlpha((int) (64 * mAlphaRate));
+        mIndexPaint.setAlpha((int) (255 * mAlphaRate));
         canvas.drawRoundRect(mIndexbarRect, 5 * mDensity, 5 * mDensity, mIndexbarPaint);
 
         if (mSections != null && mSections.length > 0) {

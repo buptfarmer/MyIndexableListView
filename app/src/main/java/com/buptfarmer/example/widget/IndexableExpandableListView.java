@@ -19,6 +19,7 @@ package com.buptfarmer.example.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ExpandableListAdapter;
@@ -81,13 +82,33 @@ public class IndexableExpandableListView extends ExpandableListView {
 		
 		if (mGestureDetector == null) {
 			mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDown(MotionEvent e) {
+                    Log.d("ccc", "onDown ");
+                    return super.onDown(e);
+                }
 
-				@Override
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    Log.d("ccc", "onSingleTapUp ");
+                    return super.onSingleTapUp(e);
+                }
+
+                @Override
+                public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//                    if (mScroller != null)
+//                        mScroller.show();
+                    Log.d("ccc", String.format("onSroll distanceX:%f,distanceY:%f", distanceX, distanceY));
+                    return super.onScroll(e1, e2, distanceX, distanceY);
+                }
+
+                @Override
 				public boolean onFling(MotionEvent e1, MotionEvent e2,
 						float velocityX, float velocityY) {
 					// If fling happens, index bar shows
 					if (mScroller != null)
 						mScroller.show();
+                    Log.d("ccc", String.format("onFling velocityX:%f,velocityY:%f", velocityX, velocityY));
 					return super.onFling(e1, e2, velocityX, velocityY);
 				}
 				

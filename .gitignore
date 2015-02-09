@@ -1,0 +1,31 @@
+bin/
+gen/
+.classpath
+.project
+local.properties
+.ant-targets-build.xml
+.settings/
+.externalToolBuilders/*
+obj/
+.cproject
+libs/*.properties
+*.class
+tests/bin/*
+tests/gen/*
+pc_tools/StoragePaths/bin/*
+pc_tools/StoragePaths/gen/*
+submodules/NotifyUI/bin/*
+submodules/NotifyUI/gen/*
+submodules/NotifyUI/local.properties
+submodules/NotifyUI/.settings/
+
+# Gradle files
+.gradle/
+build/
+
+# Android Studio files
+.idea/
+*.iml
+
+# jni obj files
+jni/*/obj/*
