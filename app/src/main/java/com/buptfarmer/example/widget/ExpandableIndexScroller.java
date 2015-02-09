@@ -55,6 +55,11 @@ public class ExpandableIndexScroller {
     private static final int STATE_SHOWN = 2;
     private static final int STATE_HIDING = 3;
 
+    private Paint mIndexbarPaint;
+    private Paint mPreviewPaint;
+    private Paint mPreviewTextPaint;
+    private Paint mIndexPaint;
+
     public ExpandableIndexScroller(Context context, IndexableExpandableListView lv, SectionIndexer indexer) {
         mDensity = context.getResources().getDisplayMetrics().density;
         mScaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
@@ -64,59 +69,70 @@ public class ExpandableIndexScroller {
         mIndexbarWidth = 20 * mDensity;
         mIndexbarMargin = 10 * mDensity;
         mPreviewPadding = 5 * mDensity;
+
+        initPaints();
+    }
+
+    private void initPaints(){
+
+        // mAlphaRate determines the rate of opacity
+        mIndexbarPaint = new Paint();
+        mIndexbarPaint.setColor(Color.BLACK);
+        mIndexbarPaint.setAlpha((int) (64 * mAlphaRate));
+        mIndexbarPaint.setAntiAlias(true);
+
+
+        mPreviewPaint = new Paint();
+        mPreviewPaint.setColor(Color.BLACK);
+        mPreviewPaint.setAlpha(96);
+        mPreviewPaint.setAntiAlias(true);
+        mPreviewPaint.setShadowLayer(3, 0, 0, Color.argb(64, 0, 0, 0));
+
+
+        mPreviewTextPaint = new Paint();
+        mPreviewTextPaint.setColor(Color.WHITE);
+        mPreviewTextPaint.setAntiAlias(true);
+        mPreviewTextPaint.setTextSize(50 * mScaledDensity);
+
+
+        mIndexPaint = new Paint();
+        mIndexPaint.setColor(Color.WHITE);
+        mIndexPaint.setAlpha((int) (255 * mAlphaRate));
+        mIndexPaint.setAntiAlias(true);
+        mIndexPaint.setTextSize(12 * mScaledDensity);
     }
 
     public void draw(Canvas canvas) {
         if (mState == STATE_HIDDEN)
             return;
 
-        // mAlphaRate determines the rate of opacity
-        Paint indexbarPaint = new Paint();
-        indexbarPaint.setColor(Color.BLACK);
-        indexbarPaint.setAlpha((int) (64 * mAlphaRate));
-        indexbarPaint.setAntiAlias(true);
-        canvas.drawRoundRect(mIndexbarRect, 5 * mDensity, 5 * mDensity, indexbarPaint);
+        canvas.drawRoundRect(mIndexbarRect, 5 * mDensity, 5 * mDensity, mIndexbarPaint);
 
         if (mSections != null && mSections.length > 0) {
             // Preview is shown when mCurrentSection is set
             if (mCurrentSection >= 0) {
-                Paint previewPaint = new Paint();
-                previewPaint.setColor(Color.BLACK);
-                previewPaint.setAlpha(96);
-                previewPaint.setAntiAlias(true);
-                previewPaint.setShadowLayer(3, 0, 0, Color.argb(64, 0, 0, 0));
 
-                Paint previewTextPaint = new Paint();
-                previewTextPaint.setColor(Color.WHITE);
-                previewTextPaint.setAntiAlias(true);
-                previewTextPaint.setTextSize(50 * mScaledDensity);
 
-                float previewTextWidth = previewTextPaint.measureText(mSections[mCurrentSection]);
-                float previewHeight = 2 * mPreviewPadding + previewTextPaint.descent() - previewTextPaint.ascent();
+                float previewTextWidth = mPreviewTextPaint.measureText(mSections[mCurrentSection]);
+                float previewHeight = 2 * mPreviewPadding + mPreviewTextPaint.descent() - mPreviewTextPaint.ascent();
                 float previewWidth = previewTextWidth;
                 RectF previewRect = new RectF((mListViewWidth - previewWidth) / 2
                         , (mListViewHeight - previewHeight) / 2
                         , (mListViewWidth - previewWidth) / 2 + previewWidth
                         , (mListViewHeight - previewHeight) / 2 + previewHeight);
 
-                canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
+                canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, mPreviewPaint);
                 canvas.drawText(mSections[mCurrentSection], previewRect.left - 1
-                        , previewRect.top + mPreviewPadding - previewTextPaint.ascent() + 1, previewTextPaint);
+                        , previewRect.top + mPreviewPadding - mPreviewTextPaint.ascent() + 1, mPreviewTextPaint);
             }
 
-            Paint indexPaint = new Paint();
-            indexPaint.setColor(Color.WHITE);
-            indexPaint.setAlpha((int) (255 * mAlphaRate));
-            indexPaint.setAntiAlias(true);
-            indexPaint.setTextSize(12 * mScaledDensity);
-
             float sectionHeight = (mIndexbarRect.height() - 2 * mIndexbarMargin) / mSections.length;
-            float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
+            float paddingTop = (sectionHeight - (mIndexPaint.descent() - mIndexPaint.ascent())) / 2;
             for (int i = 0; i < mSections.length; i++) {
                 String sectionBarString = mSections[i].substring(mSections[i].length()-2,mSections[i].length());
-                float paddingLeft = (mIndexbarWidth - indexPaint.measureText(sectionBarString)) / 2;
+                float paddingLeft = (mIndexbarWidth - mIndexPaint.measureText(sectionBarString)) / 2;
                 canvas.drawText(sectionBarString, mIndexbarRect.left + paddingLeft
-                        , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
+                        , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - mIndexPaint.ascent(), mIndexPaint);
             }
         }
     }
