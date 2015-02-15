@@ -18,6 +18,7 @@ submodules/NotifyUI/bin/*
 submodules/NotifyUI/gen/*
 submodules/NotifyUI/local.properties
 submodules/NotifyUI/.settings/
+app/build/*
 
 # Gradle files
 .gradle/

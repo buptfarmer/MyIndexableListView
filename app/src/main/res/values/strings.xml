@@ -6,5 +6,6 @@
     <string name="title_activity_expandable_list_view">ExpandableListViewActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_drag_left">DragLeftActivity</string>
 
 </resources>

@@ -25,7 +25,10 @@
         <activity
             android:name="com.buptfarmer.example.ExpandableListViewActivity"
             android:label="@string/title_activity_expandable_list_view" >
-
+        </activity>
+        <activity
+            android:name="com.buptfarmer.example.DragLeftActivity"
+            android:label="@string/title_activity_drag_left" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
