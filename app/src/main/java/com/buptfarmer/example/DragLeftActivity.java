@@ -1,5 +1,6 @@
 package com.buptfarmer.example;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -14,26 +15,31 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.woozzu.android.indexablelistview.R;
 
 public class DragLeftActivity extends Activity implements GestureDetector.OnGestureListener {
     private GestureDetector mGestureDetctor;
-    private View mContainer;
+    private FrameLayout mContainer;
     private MotionEvent mLastDownEvent;
     private float mLastDownX;
     private float mLastDownY;
     private TextView mBackCount;
     private boolean mDispatchToDragLeft;
     private float mTouchSlop;
+    private Scroller mScroller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGestureDetctor = new GestureDetector(this, this);
         setContentView(R.layout.activity_drag_left);
-        mContainer = findViewById(R.id.container);
+        mContainer = (FrameLayout) findViewById(R.id.container);
         mBackCount = (TextView) findViewById(R.id.back_count);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -41,6 +47,7 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
                     .commit();
         }
         mTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
+        mScroller = new Scroller(this);
     }
 
     @Override
@@ -85,29 +92,41 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
 //        mGestureDetctor.onTouchEvent(event);
         Log.d("ccc", "Activity onTouchEvent" + event.getAction() + ", x:" + event.getX() + ", rawX:" + event.getRawX());
         int action = event.getAction();
+
+        float distanceX = event.getRawX() - mLastDownX;
+        float distanceY = event.getRawY() - mLastDownY;
+        if (distanceX < 0) {
+            distanceX = 0;
+        }
+        mContainer.setTranslationX(distanceX);
+        float percentage = distanceX / 300;
+        if (percentage > 1) {
+            percentage = 1;
+        }
+
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
-                float distanceX = event.getRawX() - mLastDownX;
-                float distanceY = event.getRawY() - mLastDownY;
-                mContainer.setTranslationX(distanceX);
-//                mContainer.setTranslationY(distanceY);
-                float percentage = distanceX / 300;
                 mBackCount.setText(percentage + "");
                 Log.d("ccc", "Activity onTouchEvent: disX" + distanceX + ", disY:" + distanceY);
                 break;
             }
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP: {
-                mContainer.setTranslationX(0);
-                mContainer.setTranslationY(0);
+                long duration = (long) (500 * percentage);
+                ObjectAnimator scrollAnimtor = ObjectAnimator.ofFloat(mContainer, "translationX", distanceX, 0).setDuration(duration);
+                scrollAnimtor.setInterpolator(new AccelerateDecelerateInterpolator());
+                scrollAnimtor.start();
+//                mContainer.setTranslationX(0);
+//                mContainer.setTranslationY(0);
                 break;
             }
         }
         return super.onTouchEvent(event);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -229,7 +248,7 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
 
                         float distanceX = ev.getRawX() - mLastDownX;
                         float distanceY = ev.getRawY() - mLastDownY;
-                        Log.d("ccc", "rootView ACTION_MOVE"+", distanceY="+distanceY);
+                        Log.d("ccc", "rootView ACTION_MOVE" + ", distanceY=" + distanceY);
 
                         //todo replace magic number 10 with ViewConfiguration.get(this).getScaledTouchSlop();
                         if (mCurrentDraggingState == DRAGGING_STALL && Math.abs(distanceX) + Math.abs(distanceY) > 10) {
