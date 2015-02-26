@@ -3,7 +3,6 @@ package com.buptfarmer.example;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -16,10 +15,11 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.woozzu.android.indexablelistview.R;
 
@@ -188,28 +188,41 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
      */
     public static class PlaceholderFragment extends Fragment implements View.OnTouchListener {
 
+        private View fragmentRootView;
+        private Button mFragmentButton;
+
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_drag_left, container, false);
-//            rootView.setOnTouchListener((View.OnTouchListener) this);
-//            rootView.setOnClickListener(new View.OnClickListener() {
+            fragmentRootView = inflater.inflate(R.layout.fragment_drag_left, container, false);
+//            fragmentRootView.setOnTouchListener((View.OnTouchListener) this);
+//            fragmentRootView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
-//                    Log.d("ccc", "rootView onClick");
+//                    Log.d("ccc", "fragmentRootView onClick");
 //
 //                }
 //            });
-            rootView.setOnTouchListener(mCommonDetailTouchListener);
-            return rootView;
+            fragmentRootView.setOnTouchListener(mCommonDetailTouchListener);
+
+            mFragmentButton = (Button) fragmentRootView.findViewById(R.id.fragment_button);
+            mFragmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity().getApplicationContext(), "mFragmentButton onClick", Toast.LENGTH_SHORT).show();
+                    Log.d("ccc", "mFragmentButton onClick");
+
+                }
+            });
+            return fragmentRootView;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Log.d("ccc", "rootView onTouchEvent" + event.getAction() + ", x:" + event.getX());
+            Log.d("ccc", "fragmentRootView onTouchEvent" + event.getAction() + ", x:" + event.getX());
             return true;
         }
 
@@ -248,7 +261,7 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
 
                         float distanceX = ev.getRawX() - mLastDownX;
                         float distanceY = ev.getRawY() - mLastDownY;
-                        Log.d("ccc", "rootView ACTION_MOVE" + ", distanceY=" + distanceY);
+                        Log.d("ccc", "fragmentRootView ACTION_MOVE" + ", distanceY=" + distanceY);
 
                         //todo replace magic number 10 with ViewConfiguration.get(this).getScaledTouchSlop();
                         if (mCurrentDraggingState == DRAGGING_STALL && Math.abs(distanceX) + Math.abs(distanceY) > 10) {
@@ -274,8 +287,10 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
                             // consume the horizontal touch event;
                             switch (mCurrentDraggingState) {
                                 case DRAGGING_UP:
+                                    fragmentRootView.scrollTo(0, -(int) distanceY);
                                     return true;
                                 case DRAGGING_DOWN:
+                                    fragmentRootView.scrollTo(0, -(int) distanceY);
                                     return true;
                                 case DRAGGING_LEFT:
                                     return false;
@@ -290,11 +305,11 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
                         mVelocityTracker.computeCurrentVelocity(1000);
                         float velocityX = mVelocityTracker.getXVelocity();
                         float velocityY = mVelocityTracker.getYVelocity();
-                        Log.d("ccc", String.format("rootView ACTION_UP, Vx= %f, Vy=%f", velocityX, velocityY));
+                        Log.d("ccc", String.format("fragmentRootView ACTION_UP, Vx= %f, Vy=%f", velocityX, velocityY));
                         if (mCurrentDraggingState == DRAGGING_STALL) {
                             // is click event; consume the event;
 //                            performClick();
-                            Log.d("ccc", "rootView performClick");
+                            Log.d("ccc", "fragmentRootView performClick");
                             return true;
                         } else {
 
@@ -307,28 +322,31 @@ public class DragLeftActivity extends Activity implements GestureDetector.OnGest
                                     //TODO check distnce alone with velocity
                                     if (distanceUpY < -TOTAL_DISTANCE / 2 || velocityY < -VELOCITY_TRHESHOLD) {
 //                                      performSrollUp();
-                                        Log.d("ccc", "rootView DRAGGING_UP, DO");
+                                        Log.d("ccc", "fragmentRootView DRAGGING_UP, DO");
                                     } else {
-                                        Log.d("ccc", "rootView DRAGGING_UP, CANCEL");
+                                        Log.d("ccc", "fragmentRootView DRAGGING_UP, CANCEL");
 
                                     }
+                                    fragmentRootView.scrollTo(0, 0);
                                     return true;
                                 case DRAGGING_DOWN:
                                     //TODO check distnce alone with velocity
                                     if (distanceUpY > TOTAL_DISTANCE / 2 || velocityY > VELOCITY_TRHESHOLD) {
 //                                      performSrollDown();
-                                        Log.d("ccc", "rootView DRAGGING_DOWN, DO");
+                                        Log.d("ccc", "fragmentRootView DRAGGING_DOWN, DO");
                                     } else {
-                                        Log.d("ccc", "rootView DRAGGING_DOWN, CANCEL");
+                                        Log.d("ccc", "fragmentRootView DRAGGING_DOWN, CANCEL");
 
                                     }
+                                    fragmentRootView.scrollTo(0, 0);
+
                                     return true;
                                 case DRAGGING_LEFT:
-                                    Log.d("ccc", "rootView DRAGGING_LEFT");
+                                    Log.d("ccc", "fragmentRootView DRAGGING_LEFT");
 
                                     return false;
                                 case DRAGGING_RIGHT:
-                                    Log.d("ccc", "rootView DRAGGING_RIGHT");
+                                    Log.d("ccc", "fragmentRootView DRAGGING_RIGHT");
 
                                     return false;
                                 default:
