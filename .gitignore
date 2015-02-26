@@ -1,5 +1,5 @@
-bin/
-gen/
+app/bin/*
+app/gen/*
 .classpath
 .project
 local.properties
@@ -18,7 +18,7 @@ submodules/NotifyUI/bin/*
 submodules/NotifyUI/gen/*
 submodules/NotifyUI/local.properties
 submodules/NotifyUI/.settings/
-app/build/*
+app/build/
 
 # Gradle files
 .gradle/
@@ -27,6 +27,7 @@ build/
 # Android Studio files
 .idea/
 *.iml
+app/*.iml
 
 # jni obj files
 jni/*/obj/*
